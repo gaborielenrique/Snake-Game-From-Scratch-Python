@@ -1,8 +1,8 @@
-import msvcrt
 import numpy as np
 import random
 from time import sleep
 import os
+import keyboard
 
 # This random project is a simple snake game from scratch
 
@@ -282,6 +282,14 @@ move = Movements(body = snake,
                  food = food, 
                  board_length = board_length, 
                  board_width = board_width)
+
+DIRECTIONS = {
+    'w': (0, -1),
+    's': (0, 1),
+    'a': (-1, 0),
+    'd': (1, 0)
+}
+
 snake.add_link([1, 0])
 move.display(board_length = board_length, 
              board_width = board_width,
@@ -292,25 +300,30 @@ key = 's'
 
 # Main game loop
 while True:
-    
-    if msvcrt.kbhit():
-        
-        new_key = msvcrt.getch().decode('utf-8')
 
-        # Obviate key hit if opposite direction is pressed
-        if ((new_key in ['w', 's'] and key not in ['w', 's']) or 
-            (new_key in ['a', 'd'] and key not in ['a', 'd'])):
+    for new_key in ['w', 'a', 's', 'd', 'q']:
 
-            key = new_key
+        if keyboard.is_pressed(new_key):
 
-        if new_key == 'q':
+            if ((new_key in ['w', 's'] and key not in ['w', 's']) or 
+                (new_key in ['a', 'd'] and key not in ['a', 'd'])):
 
-            print("Game Ended")
+                key = new_key
+
+            if new_key == 'q':
+
+                print("Game Ended")
+                keyboard.unhook_all()
+                exit()
+
             break
-
+    
     if snake.collision_detection(board_length, board_width):
 
         print("Game Over!")
+        keyboard.unhook_all()
+        input('Press Enter to exit...')
+        os.system('cls' if os.name == 'nt' else 'clear')
         break
     
     change_x, change_y = 0, 0
@@ -318,21 +331,7 @@ while True:
     if [snake.head.x_coordinates, snake.head.y_coordinates] == [food.x_coordinates, food.y_coordinates]:
 
         # determine how new link will be added based on snake direction
-        if key == 'w':
-
-            change_y = -1
-
-        elif key == 's':
-
-            change_y = 1
-
-        elif key == 'a':
-
-            change_x = -1
-
-        elif key == 'd':
-
-            change_x = 1
+        change_x, change_y = DIRECTIONS[key]
 
         snake.add_link(change = [change_y, change_x])
 
@@ -347,4 +346,3 @@ while True:
     move.display(board_length = board_length,
                  board_width = board_width,
                  score = score)
-
