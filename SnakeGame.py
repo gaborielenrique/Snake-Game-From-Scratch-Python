@@ -54,10 +54,10 @@ class Body():
 
         # Create new link at the previous head position
         new_link = self.link(
-            x_coordinates=self.head.x_coordinates - change[1],
-            y_coordinates=self.head.y_coordinates - change[0],
-            next_link=self.head.next_link,
-            prev_link=self.head
+            x_coordinates = self.head.x_coordinates - change[1],
+            y_coordinates = self.head.y_coordinates - change[0],
+            next_link = self.head.next_link,
+            prev_link = self.head
         )
 
         # If there was a link after the head, update its prev_link
