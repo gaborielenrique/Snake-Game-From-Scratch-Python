@@ -1,4 +1,3 @@
-import numpy as np
 import random
 from time import sleep
 import os
@@ -184,7 +183,7 @@ class Movements():
         self.food = food
         
         # Initialize the display array
-        self.arr = np.full((board_length, board_width), '', dtype = object)
+        self.arr = [['' for i in range(board_width)] for j in range(board_length)]
 
 
     def display(self, board_length : int, board_width : int, score : int) -> None:
@@ -194,7 +193,7 @@ class Movements():
         '''
         # Refresh the array and set the head to display as 5
         os.system('cls' if os.name == 'nt' else 'clear')
-        self.arr.fill('')
+        self.arr = [['' for i in range(board_width)] for j in range(board_length)]
         body = self.body.head
 
         # Display the head as 'S'
@@ -217,7 +216,7 @@ class Movements():
             print(' '.join(str(x) if x != '' else '.' for x in row))
         
         print(f'Score: {score}')
-        sleep(0.04)
+        sleep(0.05)
 
 
     def moving(self, key_hit : str) -> None:
