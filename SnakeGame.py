@@ -2,6 +2,7 @@ import random
 from time import sleep
 import os
 import keyboard
+from typing import Optional
 
 # This random project is a simple snake game from scratch
 
@@ -18,9 +19,8 @@ class Body():
         '''
         Link class for the snake body
         '''
-        
-        def __init__(self, x_coordinates : int, y_coordinates : int, next_link = None,
-                     prev_link = None) -> None:
+        def __init__(self, x_coordinates : int, y_coordinates : int, next_link : Optional['Body.link'] = None,
+                     prev_link : Optional['Body.link'] = None) -> None:
 
             '''
             Initialize a link in the snake body
@@ -40,9 +40,10 @@ class Body():
     def __init__(self, board_length : int, board_width : int) -> None:
 
         # Head starts in the middle of the 2d array
-        self.head = self.link(x_coordinates = board_width // 2, 
-                              y_coordinates = board_length // 2)
-        self.coordinates_dict = {self.head : [self.head.x_coordinates, self.head.y_coordinates]}
+        self.head : Body.link = self.link(x_coordinates = board_width // 2, 
+                                          y_coordinates = board_length // 2)
+        self.coordinates_dict : dict[Body.link, list[int]] = {self.head : [self.head.x_coordinates, 
+                                                                           self.head.y_coordinates]}
 
     
     def add_link(self, change : list[int]) -> None:
@@ -52,12 +53,9 @@ class Body():
         self.head.y_coordinates += change[0]
 
         # Create new link at the previous head position
-        new_link = self.link(
-            x_coordinates = self.head.x_coordinates - change[1],
-            y_coordinates = self.head.y_coordinates - change[0],
-            next_link = self.head.next_link,
-            prev_link = self.head
-        )
+        new_link : Body.link = self.link(x_coordinates = self.head.x_coordinates - change[1], 
+                                         y_coordinates = self.head.y_coordinates - change[0], 
+                                         next_link = self.head.next_link, prev_link = self.head)
 
         # If there was a link after the head, update its prev_link
         if self.head.next_link is not None:
@@ -128,8 +126,8 @@ class Food():
             y_coordinates (int): The y-coordinate of the food
         '''
 
-        self.x_coordinates = x_coordinates
-        self.y_coordinates = y_coordinates
+        self.x_coordinates : int = x_coordinates
+        self.y_coordinates : int = y_coordinates
     
 
     def spawn(self, board_length : int, board_width : int, body : Body) -> None:
@@ -147,14 +145,14 @@ class Food():
 
         while True:
 
-            x = random.randint(0, board_width - 1)
-            y = random.randint(0, board_length - 1)
+            x_location : int = random.randint(0, board_width - 1)
+            y_location : int = random.randint(0, board_length - 1)
 
             # Check if the food is spawning on the snake body
-            if all([x != link.x_coordinates or y != link.y_coordinates for link in body.coordinates_dict]):
+            if all([x_location != link.x_coordinates or y_location != link.y_coordinates for link in body.coordinates_dict]):
 
-                self.x_coordinates = x
-                self.y_coordinates = y
+                self.x_coordinates = x_location
+                self.y_coordinates = y_location
                 break
 
 
@@ -177,23 +175,30 @@ class Movements():
         '''
 
         # Snake itself
-        self.body = body
-        
+        self.body : Body = body
+
         # Food
-        self.food = food
-        
+        self.food : Food = food
+
         # Initialize the display array
-        self.arr = [['' for i in range(board_width)] for j in range(board_length)]
+        self.arr : list[list[str]] = [['' for _ in range(board_width)] for _ in range(board_length)]
 
 
     def display(self, board_length : int, board_width : int, score : int) -> None:
 
         '''
         Display the current state of the game
+        Args:
+            board_length (int): The length of the game board
+            board_width (int): The width of the game board
+            score (int): The current score of the game
+        Returns:
+            None
         '''
-        # Refresh the array and set the head to display as 5
+
+        # Refresh the array and set the head to display as 'S'
         os.system('cls' if os.name == 'nt' else 'clear')
-        self.arr = [['' for i in range(board_width)] for j in range(board_length)]
+        self.arr = [['' for _ in range(board_width)] for _ in range(board_length)]
         body = self.body.head
 
         # Display the head as 'S'
@@ -220,6 +225,7 @@ class Movements():
 
 
     def moving(self, key_hit : str) -> None:
+
         '''
         Move the snake in the direction of the key pressed
         Args:
@@ -230,8 +236,8 @@ class Movements():
 
         # Set up temporary variables to hold the previous coordinates
         body = self.body.head
-        temp_x = body.x_coordinates
-        temp_y = body.y_coordinates
+        temp_x : int = body.x_coordinates
+        temp_y : int = body.y_coordinates
 
         #Define direction based on key press
         if key_hit in ['w', 's']:
@@ -246,8 +252,8 @@ class Movements():
         while body.next_link:
 
             body = body.next_link
-            temp2_x = body.x_coordinates
-            temp2_y = body.y_coordinates
+            temp2_x : int = body.x_coordinates
+            temp2_y : int = body.y_coordinates
             body.x_coordinates = temp_x
             body.y_coordinates = temp_y
             temp_x = temp2_x
@@ -259,10 +265,11 @@ class Movements():
 
 
 # Initialize score
-score = 0
+score : int = 0
 
 # board limits
-board_length = board_width = 20
+board_length : int = 20
+board_width : int = 20
 
 # Initialize the snake and food
 snake = Body(board_length = board_length, 
@@ -295,7 +302,7 @@ move.display(board_length = board_length,
              score = score)
 
 # Initial direction/key press
-key = 's'
+key : str = 's'
 
 # Main game loop
 while True:
@@ -325,7 +332,8 @@ while True:
         os.system('cls' if os.name == 'nt' else 'clear')
         break
     
-    change_x, change_y = 0, 0
+    change_x : int = 0
+    change_y : int = 0
 
     if [snake.head.x_coordinates, snake.head.y_coordinates] == [food.x_coordinates, food.y_coordinates]:
 
