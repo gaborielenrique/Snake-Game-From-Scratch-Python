@@ -289,7 +289,7 @@ move = Movements(body = snake,
                  board_length = board_length, 
                  board_width = board_width)
 
-DIRECTIONS = {
+DIRECTIONS : dict[str, tuple[int]]= {
     'w': (0, -1),
     's': (0, 1),
     'a': (-1, 0),
