@@ -196,21 +196,25 @@ class Movements():
             None
         '''
 
+        mamaguevo : list[str] = ['M', 'A', 'M', 'A', 'G', 'U', 'E', 'V', 'O']
+        mama_counter : int = 0
+
         # Refresh the array and set the head to display as 'S'
         os.system('cls' if os.name == 'nt' else 'clear')
         self.arr = [['' for _ in range(board_width)] for _ in range(board_length)]
         body = self.body.head
 
-        # Display the head as 'S'
+        # Display the head as 'X'
         if body.x_coordinates in range(board_length) and body.y_coordinates in range(board_width):
             
-            self.arr[body.y_coordinates][body.x_coordinates] = 'S'
+            self.arr[body.y_coordinates][body.x_coordinates] = 'X'
 
-        # Display the rest of the body as 'O'
+        # Display the rest of the body as  the words 'MAMAGUEVO'
         while body.next_link is not None:
 
             body = body.next_link
-            self.arr[body.y_coordinates][body.x_coordinates] = 'O'
+            self.arr[body.y_coordinates][body.x_coordinates] = mamaguevo[mama_counter]
+            mama_counter = (mama_counter + 1) % len(mamaguevo)
 
         # Display the food
         self.arr[self.food.y_coordinates][self.food.x_coordinates] = 'Q'
